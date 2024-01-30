@@ -1,6 +1,7 @@
 const express = require("express");
 const bookings = express.Router({ mergeParams: true });
-const {
+const {allRooms,
+  getAllBookings,
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
@@ -9,15 +10,24 @@ const {
 const { getOneRoom } = require("../queries/rooms");
 
 bookings.get("/", async (req, res) => {
-  const { roomId } = req.params;
-  try {
-    const room = await getOneRoom(roomId);
-    const bookingsByRoom = await getBookingsByRoom(roomId);
-    res.json(bookingsByRoom);
-  } catch (error) {
-    res.json(error);
+  const allBookings = await getAllBookings();
+  if (allBookings[0]) {
+    res.status(200).json(allBookings);
+  } else {
+    res.status(500).json({ success: false, data: { error: "Server Error" } });
   }
 });
+
+// bookings.get("/", async (req, res) => {
+//   const { roomId } = req.params;
+//   try {
+//     const room = await getOneRoom(roomId);
+//     const bookingsByRoom = await getBookingsByRoom(roomId);
+//     res.json(bookingsByRoom);
+//   } catch (error) {
+//     res.json(error);
+//   }
+// });
 
 bookings.get("/:bookingId", async (req, res) => {
   const { roomId, bookingId } = req.params;
