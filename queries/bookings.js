@@ -1,5 +1,14 @@
 const db = require("../db/dbConfig");
 
+const getAllBookings = async () => {
+	try {
+		const allBookings = await db.any('SELECT * FROM bookings');
+		return allBookings;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 const getBookingsByRoom = async (roomId) => {
   try {
     const bookings = await db.any(
@@ -50,6 +59,7 @@ const deleteBookingForRoom = async (roomId, id) => {
 };
 
 module.exports = {
+  getAllBookings,
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
