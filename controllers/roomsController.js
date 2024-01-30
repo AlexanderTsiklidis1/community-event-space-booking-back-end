@@ -16,9 +16,9 @@ rooms.get("/", async (req, res) => {
   }
 });
 
-rooms.get("/:index", async (req, res) => {
-  const { index } = req.params;
-  const oneRoom = await getOneRoom(index);
+rooms.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const oneRoom = await getOneRoom(id);
   if (oneRoom) {
     res.json(oneRoom);
   } else {
