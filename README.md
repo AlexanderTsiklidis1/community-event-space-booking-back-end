@@ -1,5 +1,5 @@
 # community-event-space-booking-back-end
-Welcome to the back-end repository of the community event booking app! This repository contains the server-side code and APIs for managing planetary data in the community event booking app
+Welcome to the back-end repository of the community event booking app! This repository contains the server-side code and APIs for managing community event booking data in the community event booking app
 
 ## Technologies Used
 
