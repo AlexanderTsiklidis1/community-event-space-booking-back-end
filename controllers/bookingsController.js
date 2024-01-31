@@ -1,7 +1,9 @@
 const express = require("express");
 const bookings = express.Router({ mergeParams: true });
-const {allRooms,
+const {
+  allRooms,
   getAllBookings,
+  getOneBooking,
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
@@ -10,34 +12,38 @@ const {allRooms,
 const { getOneRoom } = require("../queries/rooms");
 
 bookings.get("/", async (req, res) => {
-  const allBookings = await getAllBookings();
-  if (allBookings[0]) {
-    res.status(200).json(allBookings);
+  const { roomId } = req.params;
+  if (roomId) {
+    try {
+      const room = await getOneRoom(roomId);
+      const bookingsByRoom = await getBookingsByRoom(roomId);
+      res.json({ room, bookingsByRoom });
+    } catch (error) {
+      res.json(error);
+    }
   } else {
-    res.status(500).json({ success: false, data: { error: "Server Error" } });
+    const allBookings = await getAllBookings();
+    if (allBookings[0]) {
+      res.status(200).json(allBookings);
+    } else {
+      res.status(500).json({ success: false, data: { error: "Server Error" } });
+    }
   }
 });
-
-// bookings.get("/", async (req, res) => {
-//   const { roomId } = req.params;
-//   try {
-//     const room = await getOneRoom(roomId);
-//     const bookingsByRoom = await getBookingsByRoom(roomId);
-//     res.json(bookingsByRoom);
-//   } catch (error) {
-//     res.json(error);
-//   }
-// });
 
 bookings.get("/:bookingId", async (req, res) => {
   const { roomId, bookingId } = req.params;
   try {
-    const room = await getOneRoom(roomId);
-    const oneBookingByRoom = await getOneBookingByRoom(roomId, bookingId);
-    if (room && oneBookingByRoom) {
-      res.json(oneBookingByRoom);
+    let result;
+    if (roomId) {
+      result = await getOneBookingByRoom(roomId, bookingId);
     } else {
-      res.status(404).json({ message: "Room or Booking Not Found" });
+      result = await getOneBookingById(bookingId);
+    }
+    if (result) {
+      res.json(result);
+    } else {
+      res.status(404).json({ message: "Booking Not Found" });
     }
   } catch (error) {
     console.error(error);

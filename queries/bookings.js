@@ -9,6 +9,15 @@ const getAllBookings = async () => {
 	}
 };
 
+const getOneBooking = async (id) => {
+  try {
+    const oneBooking = await db.one('SELECT * FROM bookings WHERE room.id = $1', id)
+    return oneBooking
+  } catch (error) {
+    console.error(error)
+  } 
+}
+
 const getBookingsByRoom = async (roomId) => {
   try {
     const bookings = await db.any(
@@ -60,6 +69,7 @@ const deleteBookingForRoom = async (roomId, id) => {
 
 module.exports = {
   getAllBookings,
+  getOneBooking,
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
