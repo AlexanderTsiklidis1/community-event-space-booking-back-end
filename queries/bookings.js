@@ -72,12 +72,12 @@ const createBooking = async (roomId, booking) => {
   try {
     const { booking_name, start_time, end_time, attendees } = booking;
     const createdBooking = await db.one(`
-      INSERT INTO bookings 
-        (booking_name, start_time, end_time, attendees, room_id, room_name, floor, start_date, end_date) 
-      VALUES 
-        ($1, $2, $3, $4, $5, (SELECT room_name FROM rooms WHERE id = $5), (SELECT floor FROM rooms WHERE id = $5), $6, $7) 
-      RETURNING *
-    `, [booking_name, start_time, end_time, attendees, roomId, booking.start_date, booking.end_date]);
+  INSERT INTO bookings 
+    (booking_name, start_time, end_time, attendees, room_id, room_name, floor, start_date, end_date) 
+  VALUES 
+    ($1, $2, $3, $4, $5, (SELECT room_name FROM rooms WHERE id = $5), (SELECT floor FROM rooms WHERE id = $5), $6, $7) 
+  RETURNING *
+`, [booking_name, start_time, end_time, attendees, roomId, booking.start_date, booking.end_date]);
 
     return createdBooking;
   } catch (error) {
