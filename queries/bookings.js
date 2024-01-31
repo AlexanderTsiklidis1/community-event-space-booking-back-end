@@ -20,10 +20,23 @@ const getOneBooking = async (id) => {
 
 const getBookingsByRoom = async (roomId) => {
   try {
-    const bookings = await db.any(
-      "SELECT bookings.id, bookings.booking_name, bookings.start_time, bookings.end_time, bookings.attendees, rooms.room_name, rooms.floor, rooms.capacity FROM bookings JOIN rooms ON rooms.id = bookings.room_id WHERE rooms.id = $1",
-      roomId
-    );
+    const bookings = await db.any(`
+      SELECT 
+        bookings.id, 
+        bookings.booking_name, 
+        bookings.start_time, 
+        bookings.end_time, 
+        bookings.attendees, 
+        rooms.room_name, 
+        rooms.floor, 
+        rooms.capacity, 
+        bookings.start_date, 
+        bookings.end_date
+      FROM bookings 
+      JOIN rooms ON rooms.id = bookings.room_id 
+      WHERE rooms.id = $1
+    `, roomId);
+
     return bookings;
   } catch (error) {
     console.error(error);
@@ -32,10 +45,23 @@ const getBookingsByRoom = async (roomId) => {
 
 const getOneBookingByRoom = async (roomId, id) => {
   try {
-    const booking = await db.one(
-      "SELECT bookings.id, bookings.booking_name, bookings.start_time, bookings.end_time, bookings.attendees, rooms.room_name, rooms.floor, rooms.capacity FROM bookings JOIN rooms ON rooms.id = bookings.room_id WHERE rooms.id = $1 AND bookings.id = $2",
-      [roomId, id]
-    );
+    const booking = await db.one(`
+      SELECT 
+        bookings.id, 
+        bookings.booking_name, 
+        bookings.start_time, 
+        bookings.end_time, 
+        bookings.attendees, 
+        rooms.room_name, 
+        rooms.floor, 
+        rooms.capacity, 
+        bookings.start_date, 
+        bookings.end_date
+      FROM bookings 
+      JOIN rooms ON rooms.id = bookings.room_id 
+      WHERE rooms.id = $1 AND bookings.id = $2
+    `, [roomId, id]);
+
     return booking;
   } catch (error) {
     console.error(error);
@@ -45,10 +71,14 @@ const getOneBookingByRoom = async (roomId, id) => {
 const createBooking = async (roomId, booking) => {
   try {
     const { booking_name, start_time, end_time, attendees } = booking;
-    const createdBooking = await db.one(
-      "INSERT INTO bookings (booking_name, start_time, end_time, attendees, room_id, room_name, floor) VALUES ($1, $2, $3, $4, $5, (SELECT room_name FROM rooms WHERE id = $5), (SELECT floor FROM rooms WHERE id = $5)) RETURNING *",
-      [booking_name, start_time, end_time, attendees, roomId]
-    );
+    const createdBooking = await db.one(`
+      INSERT INTO bookings 
+        (booking_name, start_time, end_time, attendees, room_id, room_name, floor, start_date, end_date) 
+      VALUES 
+        ($1, $2, $3, $4, $5, (SELECT room_name FROM rooms WHERE id = $5), (SELECT floor FROM rooms WHERE id = $5), $6, $7) 
+      RETURNING *
+    `, [booking_name, start_time, end_time, attendees, roomId, booking.start_date, booking.end_date]);
+
     return createdBooking;
   } catch (error) {
     console.error(error);
