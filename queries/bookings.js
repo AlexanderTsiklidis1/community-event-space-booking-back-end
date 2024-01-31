@@ -85,17 +85,28 @@ const createBooking = async (roomId, booking) => {
   }
 };
 
-const deleteBookingForRoom = async (roomId, id) => {
+const deleteBooking = async (id) => {
   try {
-    const deletedBooking = await db.one(
-      "DELETE FROM bookings WHERE room_id = $1 AND id = $2 RETURNING *",
-      [roomId, id]
-    );
-    return deletedBooking;
+      const deletedBooking = await db.one(
+          "DELETE from bookings WHERE id = $1 RETURNING *",
+          id
+      );
+      return deletedBooking;
   } catch (error) {
-    console.error(error);
+      return error;
   }
 };
+// const deleteBookingForRoom = async (roomId, id) => {
+//   try {
+//     const deletedBooking = await db.one(
+//       "DELETE FROM bookings WHERE room_id = $1 AND id = $2 RETURNING *",
+//       [roomId, id]
+//     );
+//     return deletedBooking;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 module.exports = {
   getAllBookings,
@@ -103,5 +114,5 @@ module.exports = {
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
-  deleteBookingForRoom
+  deleteBooking
 };

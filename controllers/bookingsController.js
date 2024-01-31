@@ -7,7 +7,7 @@ const {
   getBookingsByRoom,
   getOneBookingByRoom,
   createBooking,
-  deleteBookingForRoom,
+  deleteBooking,
 } = require("../queries/bookings");
 const { getOneRoom } = require("../queries/rooms");
 
@@ -70,10 +70,10 @@ bookings.post("/", async (req, res) => {
   }
 });
 
-bookings.delete("/:bookingId", async (req, res) => {
+bookings.delete("/:id", async (req, res) => {
   try {
-    const { roomId, bookingId } = req.params;
-    const deletedBooking = await deleteBookingForRoom(roomId, bookingId);
+    const { id } = req.params;
+    const deletedBooking = await deleteBooking(id);
     if (deletedBooking) {
       res.status(200).json({
         success: true,
