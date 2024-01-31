@@ -1,22 +1,22 @@
 const db = require("../db/dbConfig");
 
 const getAllBookings = async () => {
-	try {
-		const allBookings = await db.any('SELECT * FROM bookings');
-		return allBookings;
-	} catch (error) {
-		console.error(error);
-	}
+  try {
+    const allBookings = await db.any('SELECT * FROM bookings');
+    return allBookings;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const getOneBooking = async (id) => {
   try {
-    const oneBooking = await db.one('SELECT * FROM bookings WHERE id=$1', id)
-    return oneBooking
+    const oneBooking = await db.one('SELECT * FROM bookings WHERE id=$1', id);
+    return oneBooking;
   } catch (error) {
-    console.error(error)
-  } 
-}
+    console.error(error);
+  }
+};
 
 const getBookingsByRoom = async (roomId) => {
   try {
@@ -46,7 +46,7 @@ const createBooking = async (roomId, booking) => {
   try {
     const { booking_name, start_time, end_time, attendees } = booking;
     const createdBooking = await db.one(
-      "INSERT INTO bookings (booking_name, start_time, end_time, attendees, roomId) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO bookings (booking_name, start_time, end_time, attendees, room_id, room_name, floor) VALUES ($1, $2, $3, $4, $5, (SELECT room_name FROM rooms WHERE id = $5), (SELECT floor FROM rooms WHERE id = $5)) RETURNING *",
       [booking_name, start_time, end_time, attendees, roomId]
     );
     return createdBooking;

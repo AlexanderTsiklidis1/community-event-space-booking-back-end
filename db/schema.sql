@@ -16,5 +16,7 @@ CREATE TABLE bookings (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     attendees TEXT,
-    room_id INTEGER REFERENCES rooms (id) ON DELETE CASCADE
+    room_id INTEGER REFERENCES rooms (id) ON DELETE CASCADE,
+    floor TEXT NOT NULL,
+    room_name TEXT NOT NULL
 );
