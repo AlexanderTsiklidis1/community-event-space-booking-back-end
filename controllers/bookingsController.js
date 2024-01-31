@@ -38,7 +38,7 @@ bookings.get("/:bookingId", async (req, res) => {
     if (roomId) {
       result = await getOneBookingByRoom(roomId, bookingId);
     } else {
-      result = await getOneBookingById(bookingId);
+      result = await getOneBooking(bookingId);
     }
     if (result) {
       res.json(result);
@@ -84,6 +84,15 @@ bookings.delete("/:bookingId", async (req, res) => {
     }
   } catch (error) {
     res.send(error);
+  }
+});
+bookings.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const oneBooking = await getOneBooking(id);
+  if (oneBooking) {
+    res.json(oneBooking);
+  } else {
+    res.status(404).json({ error: "Not Found" });
   }
 });
 
